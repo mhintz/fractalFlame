@@ -1,0 +1,1 @@
+Work on an openFrameworks implementation of the fractal flame algorithm described in "The Fractal Flame Algorithm" by Draves and Reckase, September 2003
