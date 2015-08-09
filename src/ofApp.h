@@ -6,6 +6,10 @@
 
 struct Locus {
 		int count;
+
+		Locus() {
+				count = 0;
+		}
 };
 
 class ofApp : public ofBaseApp{
@@ -37,4 +41,5 @@ class ofApp : public ofBaseApp{
 		void setupField(ofVec3f);
 		std::pair<int, int> getCoordinates(ofVec3f);
 		ofVec3f getPosFromIndex(int);
+		float getLocusAlpha(const Locus &);
 };

@@ -24,17 +24,15 @@ void ofApp::setupField(ofVec3f startPos) {
 						std::pair<int, int> indexes = getCoordinates(position);
 						// Note to self: this has to be a reference, or else assigning to its count will mutate a copy of it
 						Locus & theLocus = field.at(indexes.first * sideLength + indexes.second);
-						theLocus.count = 1;
+						theLocus.count++;
 				}
 		}
 
 		thePoints.clear();
 		for (LocusVec::size_type iter = 0; iter != field.size(); ++iter) {
 				Locus * theLocus = & field[iter];
-				if (theLocus->count == 1) {
-						thePoints.addVertex(getPosFromIndex(iter));
-						thePoints.addColor(ofColor(255.0f));
-				}
+				thePoints.addVertex(getPosFromIndex(iter));
+				thePoints.addColor(ofColor(255.0f, getLocusAlpha(* theLocus)));
 		}
 }
 
@@ -53,6 +51,10 @@ ofVec3f ofApp::getPosFromIndex(int index) {
 		// denominator of the expression are both ints, but it's good to have it in there anyway,
 		// for clarity.
 		return ofVec3f(floor(index / ofApp::sideLength), index % ofApp::sideLength);
+}
+
+float ofApp::getLocusAlpha(const Locus & theLocus) {
+		return log(theLocus.count) / 3.5f * 255.0f;
 }
 
 //--------------------------------------------------------------
