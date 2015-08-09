@@ -1,43 +1,40 @@
-//
-//  Header.h
-//  fractalFlame
-//
-//  Created by Mark Hintz on 9/8/15.
-//
-//
-
 #pragma once
 
-ofVec3f func0(const ofVec3f & pos) {
-		return ofVec3f(pos.x / 2, pos.y / 2);
-}
+#include "ofMain.h"
 
-ofVec3f func1(const ofVec3f & pos) {
-		return ofVec3f((pos.x + 1) / 2, pos.y / 2);
-}
+struct Sample {
+		ofVec2f position;
+		ofColor color;
+};
 
-ofVec3f func2(const ofVec3f & pos) {
-		return ofVec3f(pos.x / 2, (pos.y + 1) / 2);
-}
+struct TransformFunction {
+		ofColor transformColor = ofColor::white;
+		ofVec2f transform(const ofVec2f &);
+};
 
-ofVec3f runFunc(ofVec3f pos) {
-		int index = (int) ofRandom(3);
-		switch (index) {
-				case 0:
-						return func0(pos);
-				case 1:
-						return func1(pos);
-				case 2:
-						return func2(pos);
-				default:
-						throw std::logic_error("Invalid function index requested");
-		}
-}
+struct Sierp1 : public TransformFunction {
+		ofColor transformColor = ofColor(0.0f, 123.0f, 200.0f);
+		ofVec2f transform(const ofVec2f &);
+};
 
-ofVec3f variationSinusoidal(ofVec3f pos) {
-		return ofVec3f(sin(pos.x), sin(pos.y));
-}
+struct Sierp2 : public TransformFunction {
+		ofColor transformColor = ofColor(144.0f, 30.0f, 15.0f);
+		ofVec2f transform(const ofVec2f &);
+};
 
-ofVec3f runVariation(ofVec3f pos) {
-		return variationSinusoidal(pos);
-}
+struct Sierp3 : public TransformFunction {
+		ofColor transformColor = ofColor(120.0f, 10.0f, 210.0f);
+		ofVec2f transform(const ofVec2f &);
+};
+
+class Transformer {
+private:
+		Sierp1 t0 = Sierp1();
+		Sierp2 t1 = Sierp2();
+		Sierp3 t2 = Sierp3();
+
+public:
+		Sample applyTransform(const ofVec2f & pos);
+};
+
+ofVec2f runVariation(const ofVec2f &);

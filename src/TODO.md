@@ -1,0 +1,13 @@
+- Update openFrameworks master version
+- See if you can use oF master and C++11 (that would be great, you could use a shared_ptr for the field array)
+- Change all ofVec3f to ofVec2f
+- Implement colors:
+		- Implement color palette that can be sampled with a float 0 - 1
+		- Each transform function has a float parameter
+		- Start with a random float 0 - 1 (the iteration color sampler)
+		- When each transform is run, add its float value to the iteration sampler and divide by 2
+		- Use the resulting float to get a color out of the color palette
+		- Add the resulting color into the buffer at the sample position
+		- Increment the alpha value at the sample position
+		- At the end, multiply all values in the buffer by log(alpha) / alpha. This averages all the colors in the buffer and scales by the log of alpha
+		- Additional scaling may be necessary

@@ -1,16 +1,7 @@
 #pragma once
 
-#include <vector>
-
 #include "ofMain.h"
-
-struct Locus {
-		int count;
-
-		Locus() {
-				count = 0;
-		}
-};
+#include "variations.h"
 
 class ofApp : public ofBaseApp{
 
@@ -30,16 +21,21 @@ class ofApp : public ofBaseApp{
 		void gotMessage(ofMessage msg);
 
 		static int sideLength;
+		static int fieldStride;
+		static int fieldLength;
+
 		int numSamples = 600000;
 
-		typedef std::vector<Locus> LocusVec;
-		std::vector<Locus> field;
-		ofVec3f position;
+		float * field;
+
+		ofVec2f position;
+		ofVec3f color;
+		Transformer transformer = Transformer();
 		ofMesh thePoints = ofMesh();
 
 		// Setting up the field of samples
-		void setupField(ofVec3f);
-		std::pair<int, int> getCoordinates(ofVec3f);
-		ofVec3f getPosFromIndex(int);
-		float getLocusAlpha(const Locus &);
+		void setupField(ofVec2f, ofVec3f);
+		ofVec2f getCoordinates(const ofVec2f &);
+		ofVec2f getPosFromIndex(int);
+		float scaleLocusAlpha(float);
 };

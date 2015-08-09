@@ -1,38 +1,46 @@
 #include "ofApp.h"
-#include "variations.h"
 
 int ofApp::sideLength = 700;
+int ofApp::fieldStride = 4;
+int ofApp::fieldLength = ofApp::fieldStride * ofApp::sideLength * ofApp::sideLength;
 
 //--------------------------------------------------------------
 void ofApp::setup(){
 		// Initialize the field with empty components
-		field.resize(ofApp::sideLength * ofApp::sideLength);
+		field = new float[ofApp::fieldLength]();
 
-		position = ofVec3f(ofRandom(-1, 1), ofRandom(-1, 1));
+		position = ofVec2f(ofRandomf(), ofRandomf());
+		color = ofVec3f(ofRandomf(), ofRandomf(), ofRandomf());
 
-		std::cout << "Position: " << position << " - " << getCoordinates(position).first << ", " << getCoordinates(position).second << std::endl;
 
-		setupField(position);
+		setupField(position, color);
 
 		thePoints.setMode(OF_PRIMITIVE_POINTS);
 }
 
-void ofApp::setupField(ofVec3f startPos) {
+void ofApp::setupField(ofVec2f position, ofVec3f color) {
 		for (int sampleNum = 0; sampleNum < numSamples; ++sampleNum) {
-				position = runVariation(runFunc(position));
+				Sample theSample = transformer.applyTransform(position);
+				position = theSample.position;
 				if (sampleNum > 20) {
-						std::pair<int, int> indexes = getCoordinates(position);
-						// Note to self: this has to be a reference, or else assigning to its count will mutate a copy of it
-						Locus & theLocus = field.at(indexes.first * sideLength + indexes.second);
-						theLocus.count++;
+						ofVec2f indexes = getCoordinates(position);
+						int fieldIndex = indexes.x * sideLength + indexes.y;
+						field[fieldIndex] += theSample.color.r;
+						field[fieldIndex + 1] += theSample.color.g;
+						field[fieldIndex + 2] += theSample.color.b;
+						field[fieldIndex + 3]++;
 				}
 		}
 
 		thePoints.clear();
-		for (LocusVec::size_type iter = 0; iter != field.size(); ++iter) {
-				Locus * theLocus = & field[iter];
+		for (int iter = 0; iter != ofApp::fieldLength; iter += ofApp::fieldStride) {
 				thePoints.addVertex(getPosFromIndex(iter));
-				thePoints.addColor(ofColor(255.0f, getLocusAlpha(* theLocus)));
+				float count = field[iter + 3];
+				float rVal = field[iter] / count * 255.0f;
+				float gVal = field[iter + 1] / count * 255.0f;
+				float bVal = field[iter + 2] / count * 255.0f;
+				float alphaVal = scaleLocusAlpha(count);
+				thePoints.addColor(ofColor(rVal, gVal, bVal, alphaVal));
 		}
 }
 
@@ -40,21 +48,21 @@ float normalizePos(float val) {
 		return (val + 1) / 2;
 }
 
-std::pair<int, int> ofApp::getCoordinates(ofVec3f position) {
+ofVec2f ofApp::getCoordinates(const ofVec2f & position) {
 		int xPos = (int) (normalizePos(position.x) * ofApp::sideLength);
 		int yPos = (int) (normalizePos(position.y) * ofApp::sideLength);
-		return std::pair<int, int>(xPos, yPos);
+		return ofVec2f(xPos, yPos);
 }
 
-ofVec3f ofApp::getPosFromIndex(int index) {
+ofVec2f ofApp::getPosFromIndex(int index) {
 		// Note to self: the floor operation might not be necessary, since the numerator and
 		// denominator of the expression are both ints, but it's good to have it in there anyway,
 		// for clarity.
-		return ofVec3f(floor(index / ofApp::sideLength), index % ofApp::sideLength);
+		return ofVec2f(floor(index / ofApp::sideLength), index % ofApp::sideLength);
 }
 
-float ofApp::getLocusAlpha(const Locus & theLocus) {
-		return log(theLocus.count) / 3.5f * 255.0f;
+float ofApp::scaleLocusAlpha(float alpha) {
+		return log(alpha) / 3.5f * 255.0f;
 }
 
 //--------------------------------------------------------------
