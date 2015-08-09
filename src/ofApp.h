@@ -37,10 +37,4 @@ class ofApp : public ofBaseApp{
 		void setupField(ofVec3f);
 		std::pair<int, int> getCoordinates(ofVec3f);
 		ofVec3f getPosFromIndex(int);
-
-		// The IFS itself
-		ofVec3f runFunc(ofVec3f, int);
-		ofVec3f func0(const ofVec3f &);
-		ofVec3f func1(const ofVec3f &);
-		ofVec3f func2(const ofVec3f &);
 };

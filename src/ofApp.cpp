@@ -1,4 +1,5 @@
 #include "ofApp.h"
+#include "variations.h"
 
 int ofApp::sideLength = 700;
 
@@ -18,7 +19,7 @@ void ofApp::setup(){
 
 void ofApp::setupField(ofVec3f startPos) {
 		for (int sampleNum = 0; sampleNum < numSamples; ++sampleNum) {
-				position = runFunc(position, (int) ofRandom(3));
+				position = runVariation(runFunc(position));
 				if (sampleNum > 20) {
 						std::pair<int, int> indexes = getCoordinates(position);
 						// Note to self: this has to be a reference, or else assigning to its count will mutate a copy of it
@@ -27,25 +28,13 @@ void ofApp::setupField(ofVec3f startPos) {
 				}
 		}
 
+		thePoints.clear();
 		for (LocusVec::size_type iter = 0; iter != field.size(); ++iter) {
 				Locus * theLocus = & field[iter];
 				if (theLocus->count == 1) {
 						thePoints.addVertex(getPosFromIndex(iter));
 						thePoints.addColor(ofColor(255.0f));
 				}
-		}
-}
-
-ofVec3f ofApp::runFunc(ofVec3f pos, int index) {
-		switch (index) {
-				case 0:
-						return func0(pos);
-				case 1:
-						return func1(pos);
-				case 2:
-						return func2(pos);
-				default:
-						throw std::logic_error("Invalid function index requested");
 		}
 }
 
@@ -64,18 +53,6 @@ ofVec3f ofApp::getPosFromIndex(int index) {
 		// denominator of the expression are both ints, but it's good to have it in there anyway,
 		// for clarity.
 		return ofVec3f(floor(index / ofApp::sideLength), index % ofApp::sideLength);
-}
-
-ofVec3f ofApp::func0(const ofVec3f & pos) {
-		return ofVec3f(pos.x / 2, pos.y / 2);
-}
-
-ofVec3f ofApp::func1(const ofVec3f & pos) {
-		return ofVec3f((pos.x + 1) / 2, pos.y / 2);
-}
-
-ofVec3f ofApp::func2(const ofVec3f & pos) {
-		return ofVec3f(pos.x / 2, (pos.y + 1) / 2);
 }
 
 //--------------------------------------------------------------
