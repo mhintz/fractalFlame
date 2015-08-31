@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
-#include "variations.h"
+#include "TransformFunction.h"
 
 class ofApp : public ofBaseApp{
 
@@ -24,17 +24,23 @@ class ofApp : public ofBaseApp{
 		static int fieldStride;
 		static int fieldLength;
 
-		int numSamples = 600000;
+		const int numSamples = 600000;
 
-		float * field;
+		float * field = NULL;
 
-		ofVec2f position;
+		const int numTransforms = 3;
+		TransformFunction * transforms = NULL;
+		float * transformProbabilities = NULL;
+
+		ofVec2f iterPosition;
 		ofVec3f color;
-		Transformer transformer = Transformer();
+
 		ofMesh thePoints = ofMesh();
 
 		// Setting up the field of samples
-		void setupField(ofVec2f, ofVec3f);
+		Sample applyRandomTransform(const Sample &);
+		void resetField();
+		void generateField(ofVec2f, ofFloatColor);
 		ofVec2f getCoordinates(const ofVec2f &);
 		ofVec2f getPosFromIndex(int);
 		float scaleLocusAlpha(float);
