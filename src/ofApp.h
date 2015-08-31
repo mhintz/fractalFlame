@@ -25,12 +25,11 @@ class ofApp : public ofBaseApp{
 		static int fieldLength;
 
 		const int numSamples = 600000;
-
-		float * field = NULL;
-
 		const int numTransforms = 3;
-		TransformFunction * transforms = NULL;
-		float * transformProbabilities = NULL;
+
+		vector<float> field;
+		vector<TransformFunction> transforms;
+		vector<float> transformProbabilities;
 
 		ofVec2f iterPosition;
 		ofVec3f color;
