@@ -22,8 +22,6 @@ void generateProbDist(int numValues, float * storage) {
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-	thePoints.setMode(OF_PRIMITIVE_POINTS);
-
 	resetField();
 }
 
@@ -89,19 +87,15 @@ void ofApp::generateField(ofVec2f position, ofFloatColor color) {
 		}
 	}
 
-	thePoints.clear();
 	for (int iter = 0; iter != ofApp::fieldLength; iter += ofApp::fieldStride) {
-		thePoints.addVertex(getPosFromIndex(iter));
 		float count = field[iter + 3];
-		int grayScale = count > 0 ? 1 : 0;
-		float rVal = field[iter];
-		float gVal = field[iter + 1];
-		float bVal = field[iter + 2];
-		float alphaVal = scaleLocusAlpha(count);
-		// thePoints.addColor(ofColor(255, 255, 255));
-		// thePoints.addColor(ofFloatColor(alphaVal, alphaVal, alphaVal));
-		thePoints.addColor(ofFloatColor(rVal, gVal, bVal, alphaVal));
+//		float rVal = field[iter];
+//		float gVal = field[iter + 1];
+//		float bVal = field[iter + 2];
+		field[iter + 3] = scaleLocusAlpha(count);
 	}
+
+	imageTex.loadData(& field.front(), ofApp::sideLength, ofApp::sideLength, GL_RGBA);
 }
 
 float normalizePos(float val) {
@@ -132,9 +126,7 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 //		 Draw the field
-	ofBackground(8);
-
-	thePoints.draw();
+	imageTex.draw(0, 0, ofApp::sideLength, ofApp::sideLength);
 }
 
 //--------------------------------------------------------------

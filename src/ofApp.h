@@ -34,7 +34,7 @@ public:
 	ofVec2f iterPosition;
 	ofVec3f color;
 
-	ofMesh thePoints = ofMesh();
+	ofTexture imageTex;
 
 	// Setting up the field of samples
 	Sample applyRandomTransform(const Sample &);
