@@ -22,13 +22,15 @@ void generateProbDist(int numValues, float * storage) {
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+	ofBackground(0, 0, 0);
+
 	resetField();
 }
 
 void ofApp::resetField() {
-	// Initialize the field with empty components
-	field.clear();
-	field.resize(ofApp::fieldLength);
+	// Allocate the image with empty components
+	flameImage.clear();
+	flameImage.allocate(ofApp::sideLength, ofApp::sideLength, OF_IMAGE_COLOR_ALPHA);
 
 	// Initialize the transforms with random parameters
 	transforms.clear();
@@ -42,11 +44,6 @@ void ofApp::resetField() {
 		transforms[tNum].probability = probabilities[tNum];
 	}
 
-	// For the Sierpinski example, set parameters and probabilities by hand
-	// transforms[0] = TransformFunction(0.33f, 0.5f, 0.0f, 0.0f, 0.0f, 0.5f, 0.0f, ofFloatColor(0.0f, 0.5f, 0.75f));
-	// transforms[1] = TransformFunction(0.33f, 0.5f, 0.0f, 0.5f, 0.0f, 0.5f, 0.0f, ofFloatColor(0.5f, 0.1f, 0.05f));
-	// transforms[2] = TransformFunction(0.34f, 0.5f, 0.0f, 0.0f, 0.0f, 0.5f, 0.5f, ofFloatColor(0.5f, 0.05f, 0.8f));
-
 	// Creates a cumulative probability distribution
 	transformProbabilities.resize(numTransforms);
 	float probSum = 0.0f;
@@ -56,7 +53,7 @@ void ofApp::resetField() {
 	}
 
 	// Setup the field, starting from a random place
-	generateField(ofVec2f(ofRandomf(), ofRandomf()), ofFloatColor(ofRandomf(), ofRandomf(), ofRandomf()));
+	generateField(ofVec2f(ofRandomf(), ofRandomf()));
 }
 
 Sample ofApp::applyRandomTransform(const Sample & input) {
@@ -72,40 +69,40 @@ Sample ofApp::applyRandomTransform(const Sample & input) {
 	return input;
 }
 
-void ofApp::generateField(ofVec2f position, ofFloatColor color) {
-	Sample iterationSample(position, color);
+void ofApp::generateField(ofVec2f position) {
+	Sample iterationSample(position);
+
+	float * pixels = flameImage.getPixels();
 
 	for (int sampleNum = 0; sampleNum < numSamples; ++sampleNum) {
 		iterationSample = applyRandomTransform(iterationSample);
 		if (sampleNum > 20) {
-			ofVec2f indexes = getCoordinates(iterationSample.position);
-			int fieldIndex = indexes.x * sideLength + indexes.y;
-			field[fieldIndex] = (field[fieldIndex] + iterationSample.color.r) / 2;
-			field[fieldIndex + 1] = (field[fieldIndex + 1] + iterationSample.color.g) / 2;
-			field[fieldIndex + 2] = (field[fieldIndex + 2] + iterationSample.color.b) / 2;
-			field[fieldIndex + 3]++;
+			int fieldIndex = getFieldIndex(iterationSample.position);
+			if (fieldIndex >= 0 && fieldIndex < ofApp::fieldLength) {
+				pixels[fieldIndex] = (pixels[fieldIndex] + iterationSample.color.r) / 2;
+				pixels[fieldIndex + 1] = (pixels[fieldIndex + 1] + iterationSample.color.g) / 2;
+				pixels[fieldIndex + 2] = (pixels[fieldIndex + 2] + iterationSample.color.b) / 2;
+				pixels[fieldIndex + 3]++;
+			}
 		}
 	}
 
-	for (int iter = 0; iter != ofApp::fieldLength; iter += ofApp::fieldStride) {
-		float count = field[iter + 3];
-//		float rVal = field[iter];
-//		float gVal = field[iter + 1];
-//		float bVal = field[iter + 2];
-		field[iter + 3] = scaleLocusAlpha(count);
+	for (int iter = 0; iter < ofApp::fieldLength; iter += ofApp::fieldStride) {
+		pixels[iter + 3] = scaleLocusAlpha(pixels[iter + 3]);
 	}
 
-	imageTex.loadData(& field.front(), ofApp::sideLength, ofApp::sideLength, GL_RGBA);
+	flameImage.update();
 }
 
 float normalizePos(float val) {
 	return ofClamp((val + 1) / 2, 0.0f, 1.0f);
 }
 
-ofVec2f ofApp::getCoordinates(const ofVec2f & position) {
-	int xPos = (int) (normalizePos(position.x) * ofApp::sideLength);
-	int yPos = (int) (normalizePos(position.y) * ofApp::sideLength);
-	return ofVec2f(xPos, yPos);
+int ofApp::getFieldIndex(const ofVec2f & position) {
+	float yPos = position.y * ofApp::sideLength;
+	float xPos = position.x * ofApp::sideLength;
+	int index = floor(yPos) * ofApp::sideLength + floor(xPos);
+	return index * ofApp::fieldStride;
 }
 
 ofVec2f ofApp::getPosFromIndex(int index) {
@@ -126,12 +123,13 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
 //		 Draw the field
-	imageTex.draw(0, 0, ofApp::sideLength, ofApp::sideLength);
+	flameImage.draw(0, 0);
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
 	if (key == 'r') {
+		cout << "reset" << endl;
 		resetField();
 	}
 }

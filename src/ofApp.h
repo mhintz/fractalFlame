@@ -27,20 +27,19 @@ public:
 	const int numSamples = 600000;
 	const int numTransforms = 3;
 
-	vector<float> field;
 	vector<TransformFunction> transforms;
 	vector<float> transformProbabilities;
 
 	ofVec2f iterPosition;
 	ofVec3f color;
 
-	ofTexture imageTex;
+	ofFloatImage flameImage;
 
 	// Setting up the field of samples
 	Sample applyRandomTransform(const Sample &);
 	void resetField();
-	void generateField(ofVec2f, ofFloatColor);
-	ofVec2f getCoordinates(const ofVec2f &);
+	void generateField(ofVec2f);
+	int getFieldIndex(const ofVec2f &);
 	ofVec2f getPosFromIndex(int);
 	float scaleLocusAlpha(float);
 };
