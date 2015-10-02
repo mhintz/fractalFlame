@@ -11,3 +11,8 @@
 		- Increment the alpha value at the sample position
 		- At the end, multiply all values in the buffer by log(alpha) / alpha. This averages all the colors in the buffer and scales by the log of alpha
 		- Additional scaling may be necessary
+    
+- http://openframeworks.cc/documentation/graphics/ofImage.html#show_getPixelsRef
+- http://openframeworks.cc/documentation/graphics/ofPixels.html
+- https://sites.google.com/site/ofauckland/examples/rotating-pixels
+- http://forum.openframeworks.cc/t/drawing-an-image-pixel-by-pixel/16443
