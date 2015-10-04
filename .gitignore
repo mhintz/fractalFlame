@@ -1,3 +1,7 @@
+# project-specific
+chaosGame.html
+# reference file
+
 # Output
 bin/*
 !bin/data
