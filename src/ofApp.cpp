@@ -72,6 +72,15 @@ void ofApp::resetField() {
 }
 
 Sample ofApp::applyRandomTransform(const Sample & input) {
+	int randVal = (int) floor((double) ofRandom(0.0, transforms.size()));
+	if (randVal == transforms.size()) {
+		cout << "Had a value that was too high :(" << endl;
+		randVal = randVal - 1;
+	}
+	return transforms.at(randVal).apply(input);
+}
+
+Sample ofApp::applyWeightedTransform(const Sample & input) {
 	float randVal = ofRandom(0.f, 1.f);
 	for (int tNum = 0; tNum < transformProbabilities.size(); ++tNum) {
 		if (randVal <= transformProbabilities.at(tNum)) {

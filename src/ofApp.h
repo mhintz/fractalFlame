@@ -36,6 +36,7 @@ public:
 
 	// Setting up the field of samples
 	Sample applyRandomTransform(const Sample &);
+	Sample applyWeightedTransform(const Sample &);
 	void resetField();
 	void generateField();
 	int getFieldIndex(const ofVec2f &);
