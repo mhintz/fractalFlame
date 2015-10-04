@@ -28,6 +28,10 @@ vector<float> generateProbDist(int numValues) {
 	return storage;
 }
 
+float normalizePos(float val) {
+	return ofClamp((val + 1) / 2, 0.0f, 1.0f);
+}
+
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofBackground(0, 0, 0);
@@ -37,7 +41,7 @@ void ofApp::setup(){
 
 void ofApp::resetField() {
 	TransformParameters params = TransformParameters();
-	int numTransforms = round(ofRandom(3.f, 7.f));
+	int numTransforms = round(ofRandom(2.f, 5.f));
 
 	// Clear existing transforms
 	transforms.clear();
@@ -108,10 +112,6 @@ void ofApp::generateField() {
 	}
 
 	flameImage.update();
-}
-
-float normalizePos(float val) {
-	return ofClamp((val + 1) / 2, 0.0f, 1.0f);
 }
 
 int ofApp::getFieldIndex(const ofVec2f & position) {

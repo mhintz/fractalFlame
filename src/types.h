@@ -20,15 +20,37 @@ public:
 	float maxSkewAngle;
 	float maxScale;
 	float minScale;
+	bool hasReflection;
+	bool ratioFixed;
 	float colorMin;
 	float colorMax;
+	float gammaValue;
 
 	TransformParameters() {
 		maxRotAngle = TWO_PI;
 		maxSkewAngle = ofRandom(0.f, PI / 4.f);
-		minScale = 0.33f;
-		maxScale = 0.67f;
+		minScale = 0.4f;
+		maxScale = 1.f;
+		hasReflection = false;
+		ratioFixed = false;
+
+		// Color settings
 		colorMin = 48.f / 255.f;
 		colorMax = 1.f;
+		gammaValue = 0.3;
+	}
+
+	static TransformParameters rigidMaps() {
+		TransformParameters retVal;
+
+		// rigid maps parameters
+		retVal.maxRotAngle = TWO_PI;
+		retVal.maxSkewAngle = 0.f;
+		retVal.minScale = 0.4f;
+		retVal.maxScale = 1.f;
+		retVal.hasReflection = false;
+		retVal.ratioFixed = true;
+
+		return retVal;
 	}
 };

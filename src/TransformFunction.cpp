@@ -10,8 +10,12 @@ TransformFunction::TransformFunction(const TransformParameters & params) {
 	float angle1 = rotationAngle + skewAngle;
 	float angle2 = rotationAngle - skewAngle;
 
-	float radius1 = randPlusMinus() * ofRandom(params.minScale, params.maxScale);
-	float radius2 = randPlusMinus() * ofRandom(params.minScale, params.maxScale);
+	float radius1 = (params.hasReflection ? randPlusMinus() : 1) * ofRandom(params.minScale, params.maxScale);
+	float radius2 = (params.hasReflection ? randPlusMinus() : 1) * ofRandom(params.minScale, params.maxScale);
+
+	if (params.ratioFixed) {
+		radius2 = radius1;
+	}
 
 	xx = radius1 * cos(angle1);
 	xy = -radius2 * sin(angle2);
