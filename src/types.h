@@ -20,11 +20,15 @@ public:
 	float maxSkewAngle;
 	float maxScale;
 	float minScale;
+	float colorMin;
+	float colorMax;
 
 	TransformParameters() {
 		maxRotAngle = TWO_PI;
-		maxSkewAngle = ofRandom(PI / 4.f);
+		maxSkewAngle = ofRandom(0.f, PI / 4.f);
 		minScale = 0.33f;
 		maxScale = 0.67f;
+		colorMin = 48.f / 255.f;
+		colorMax = 1.f;
 	}
 };

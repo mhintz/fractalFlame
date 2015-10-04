@@ -1,6 +1,13 @@
 #pragma once
 
+#include "ofMain.h"
+
 class Variation {
-		float weight;
 public:
+
+	ofVec2f apply(const ofVec2f &);
+
+private:
+
+	float weight;
 };

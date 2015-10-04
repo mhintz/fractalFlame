@@ -1,12 +1,12 @@
 #include "TransformFunction.h"
 
 int randPlusMinus() {
-	return ofRandomf() < 0.5f ? -1 : 1;
+	return ofRandom(0.f, 1.f) < 0.5f ? -1 : 1;
 }
 
-TransformFunction::TransformFunction(TransformParameters params) {
-	float rotationAngle = params.maxRotAngle * ofRandom(-1, 1);
-	float skewAngle = params.maxSkewAngle * ofRandom(-1, 1);
+TransformFunction::TransformFunction(const TransformParameters & params) {
+	float rotationAngle = params.maxRotAngle * ofRandom(-1.f, 1.f);
+	float skewAngle = params.maxSkewAngle * (1.f - 2 * pow(ofRandom(0.f, 1.f), 3.f));
 	float angle1 = rotationAngle + skewAngle;
 	float angle2 = rotationAngle - skewAngle;
 
@@ -36,19 +36,27 @@ TransformFunction::TransformFunction(TransformParameters params) {
 	}
 
 	// Transformation values
-	xt = pow(ofRandomf(), 0.5f) * randPlusMinus() * (1 - abs(xx) - abs(xy));
-	yt = pow(ofRandomf(), 0.5f) * randPlusMinus() * (1 - abs(yy) - abs(yx));
+	xt = pow(ofRandom(0.f, 1.f), 0.5f) * randPlusMinus() * (1.f - abs(xx) - abs(xy));
+	yt = pow(ofRandom(0.f, 1.f), 0.5f) * randPlusMinus() * (1.f - abs(yy) - abs(yx));
 
 	// Generate the color here
+	color = ofFloatColor(ofRandom(params.colorMin, params.colorMax), ofRandom(params.colorMin, params.colorMax), ofRandom(params.colorMin, params.colorMax));
+
+	float maxComponent = max(color.r, max(color.g, color.b));
+
+	// Brigten the colors
+	color.r = color.r / maxComponent;
+	color.g = color.g / maxComponent;
+	color.b = color.b / maxComponent;
 }
 
 TransformFunction::TransformFunction() :
-probability(0.0f), xx(ofRandomf()), xy(ofRandomf()), xt(ofRandomf()), yx(ofRandomf()), yy(ofRandomf()), yt(ofRandomf()), color(ofFloatColor(ofRandomf(), ofRandomf(), ofRandomf())) {
+xx(ofRandom(-1.f, 1.f)), xy(ofRandom(-1.f, 1.f)), xt(ofRandom(-1.f, 1.f)), yx(ofRandom(-1.f, 1.f)), yy(ofRandom(-1.f, 1.f)), yt(ofRandom(-1.f, 1.f)), color(ofFloatColor(ofRandom(0.f, 1.f), ofRandom(0.f, 1.f), ofRandom(0.f, 1.f))) {
 
 }
 
-TransformFunction::TransformFunction(float _probability, float _A, float _B, float _C, float _D, float _E, float _F, ofFloatColor _color) :
-probability(_probability), xx(_A), xy(_B), xt(_C), yx(_D), yy(_E), yt(_F), color(_color) {
+TransformFunction::TransformFunction(float _A, float _B, float _C, float _D, float _E, float _F, ofFloatColor _color) :
+xx(_A), xy(_B), xt(_C), yx(_D), yy(_E), yt(_F), color(_color) {
 
 }
 

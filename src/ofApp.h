@@ -23,9 +23,8 @@ public:
 	static int sideLength;
 	static int fieldStride;
 	static int fieldLength;
-
-	const int numSamples = 600000;
-	const int numTransforms = 3;
+	static int numSamples;
+	static int ignoreSamples;
 
 	vector<TransformFunction> transforms;
 	vector<float> transformProbabilities;
@@ -38,8 +37,7 @@ public:
 	// Setting up the field of samples
 	Sample applyRandomTransform(const Sample &);
 	void resetField();
-	void generateField(ofVec2f);
+	void generateField();
 	int getFieldIndex(const ofVec2f &);
-	ofVec2f getPosFromIndex(int);
 	float scaleLocusAlpha(float);
 };
