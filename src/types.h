@@ -24,7 +24,6 @@ public:
 	bool ratioFixed;
 	float colorMin;
 	float colorMax;
-	float gammaValue;
 
 	TransformParameters() {
 		maxRotAngle = TWO_PI;
@@ -37,7 +36,6 @@ public:
 		// Color settings
 		colorMin = 48.f / 255.f;
 		colorMax = 1.f;
-		gammaValue = 0.3;
 	}
 
 	static TransformParameters rigidMaps() {

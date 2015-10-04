@@ -103,21 +103,32 @@ void ofApp::generateField() {
 
 	float * pixels = flameImage.getPixels();
 
+	int maxPixelHits = 0;
+
 	for (int sampleNum = 0; sampleNum < ofApp::numSamples; ++sampleNum) {
 		iterationSample = applyRandomTransform(iterationSample);
 		if (sampleNum > ofApp::ignoreSamples) {
 			int fieldIndex = getFieldIndex(iterationSample.position);
 			if (fieldIndex >= 0 && fieldIndex < ofApp::fieldLength) {
-				pixels[fieldIndex] = (pixels[fieldIndex] + iterationSample.color.r) / 2.f;
-				pixels[fieldIndex + 1] = (pixels[fieldIndex + 1] + iterationSample.color.g) / 2.f;
-				pixels[fieldIndex + 2] = (pixels[fieldIndex + 2] + iterationSample.color.b) / 2.f;
-				pixels[fieldIndex + 3]++;
+				int pixCount = pixels[fieldIndex + 3];
+				int newPixCount = pixCount + 1;
+				if (newPixCount > maxPixelHits) {
+					maxPixelHits = newPixCount;
+				}
+
+				float avgFactor = 1.f / float(newPixCount);
+				pixels[fieldIndex] = (pixels[fieldIndex] * pixCount + iterationSample.color.r) * avgFactor;
+				pixels[fieldIndex + 1] = (pixels[fieldIndex + 1] * pixCount + iterationSample.color.g) * avgFactor;
+				pixels[fieldIndex + 2] = (pixels[fieldIndex + 2] * pixCount + iterationSample.color.b) * avgFactor;
+				pixels[fieldIndex + 3] = newPixCount;
 			}
 		}
 	}
 
 	for (int iter = 0; iter < ofApp::fieldLength; iter += ofApp::fieldStride) {
-		pixels[iter + 3] = scaleLocusAlpha(pixels[iter + 3]);
+		if (pixels[iter + 3] != 0) {
+			pixels[iter + 3] = scaleLocusAlpha(pixels[iter + 3] / maxPixelHits);
+		}
 	}
 
 	flameImage.update();
@@ -131,7 +142,9 @@ int ofApp::getFieldIndex(const ofVec2f & position) {
 }
 
 float ofApp::scaleLocusAlpha(float alpha) {
-		return log(alpha) / 10.f;
+	static float gammaValue = 0.3;
+	static float oneOverLN2 = 1.f / log(2.f);
+	return pow(log(1 + alpha) * oneOverLN2, gammaValue);
 }
 
 //--------------------------------------------------------------
