@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofMain.h"
+
 #include "TransformFunction.h"
 
 class ofApp : public ofBaseApp{
@@ -41,6 +42,5 @@ public:
 	Sample applyWeightedTransform(const Sample &);
 	void resetField();
 	void generateField();
-	int getFieldIndex(const ofVec2f &);
 	float scaleLocusAlpha(float);
 };
